@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             background-color: #f5f5f5;
+            transition: background-color 0.3s ease;
         }
         .header {
             display: flex;
@@ -19,12 +20,46 @@
             background-color: white;
             padding: 10px 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .logo {
             font-size: 24px;
             font-weight: bold;
             color: #191970;
+            transition: color 0.3s ease;
         }
+
+/* 视频信息和推荐视频区域夜间模式样式 */
+.dark-mode .content {
+    background-color: #000000;
+    color: white;
+    box-shadow: 0 2px 4px rgba(255,255,255,0.1);
+}
+.dark-mode .video-info h1 {
+    color: white;
+}
+.dark-mode .video-info p {
+    color: #aaa;
+}
+.dark-mode .related-videos h2 {
+    color: white;
+}
+.dark-mode .related-videos .related-video h3 {
+    color: white;
+}
+.dark-mode .related-videos .related-video p {
+    color: #aaa;
+}
+/* 头部区域夜间模式样式 */
+.dark-mode .header {
+    background-color: #000000;
+    color: white;
+    box-shadow: 0 2px 4px rgba(255,255,255,0.1);
+}
+.dark-mode .logo {
+    color: white;
+}
+        /* 视频播放器容器 */
         .player-container {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 aspect ratio */
@@ -81,6 +116,76 @@
             color: #666;
             font-size: 14px;
         }
+
+        /* 按钮样式 */
+        .theme-toggle {
+            padding: 5px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .light-mode .theme-toggle {
+            background-color: #F0F0F0;
+            color: #000000;
+        }
+        .dark-mode .theme-toggle {
+            background-color: #333333;
+            color: white;
+        }
+
+/* 弹窗样式 */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s linear 0.3s, opacity 0.3s;
+}
+
+.popup.visible {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: 0s;
+}
+
+.popup-content {
+    background-color: black;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+}
+
+.popup-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    color: white;
+}
+
+.popup a {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #000000;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .player-container {
@@ -88,10 +193,29 @@
             }
         }
     </style>
+	<style type="text/css">
+		a:link {
+			color:white;
+			text-decoration:none;
+		}
+		a:visited {
+			color:white;
+			text-decoration:none;
+		}
+		a:hover {
+			color:pink;
+			text-decoration:none;
+		}
+		a:active {
+			color:white;
+			text-decoration:none;
+		}
+	</style>
 </head>
 <body>
     <header class="header">
-        <div class="logo">MeiTube</div>
+        <div class="logo" id="logo">MeiTube</div>
+        <button id="toggleDarkMode" class="theme-toggle" onclick="toggleDarkMode()">夜间模式</button>
     </header>
     <main>
         <section class="player-container" oncontextmenu="return false;">
@@ -264,6 +388,47 @@ if (matchedVideo) {
 document.querySelector('.player-container').addEventListener('contextmenu', function(e) {
     e.preventDefault();
 });
+
+let isDarkMode = false;
+
+// 更新昼夜模式切换时的内容样式
+function toggleDarkMode() {
+    isDarkMode = !isDarkMode;
+    document.body.classList.toggle('dark-mode', isDarkMode);
+
+    if (isDarkMode) {
+        // 改变logo的文字颜色和背景颜色
+        const logo = document.getElementById('logo');
+        logo.innerHTML = '<span style="color: white;">Mei</span><span style="color: black; background-color: orange;">Tube</span>';
+
+        // 更新按钮文字
+        const themeToggle = document.getElementById('toggleDarkMode');
+        themeToggle.textContent = '白昼模式';
+
+        // 显示弹窗
+        showPopup();
+    } else {
+        // 恢复logo的文字颜色和背景颜色
+        const logo = document.getElementById('logo');
+        logo.textContent = 'MeiTube';
+
+        // 更新按钮文字
+        const themeToggle = document.getElementById('toggleDarkMode');
+        themeToggle.textContent = '夜间模式';
+    }
+}
+
+// 显示弹窗
+function showPopup() {
+    const popup = document.getElementById('popup');
+    popup.classList.add('visible');
+}
+
+// 关闭弹窗
+function closePopup() {
+    const popup = document.getElementById('popup');
+    popup.classList.remove('visible');
+}
     </script>
 
     <!-- 添加Giscus评论脚本 -->
@@ -282,5 +447,19 @@ document.querySelector('.player-container').addEventListener('contextmenu', func
         crossorigin="anonymous"
         async>
     </script>
+    <!-- 弹窗 -->
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <span class="popup-close" onclick="closePopup()">×</span>
+            <p>想打炮🔥</p>
+            <p>🔥打飞机🔥，打手枪🔥</p>
+            <p>🔞血与肉的碰撞，声声入耳的叫</p>
+            <p>🔞这是灵魂的碰撞，更是对自己意志的磨炼</p>
+            <p>🔞别害羞，深夜寂寞是时候来点热血的</p>
+            <p>🔞体会真男人一样激烈的战斗</p>
+            <a href="https://www.gfbzb.gov.cn/">❤️点击此网站❤️</a>
+            <p>未成年无法参加🔞</p>
+        </div>
+    </div>
 </body>
 </html>
