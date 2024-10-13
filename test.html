@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Clone</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 56px;
+            padding: 0 16px;
+            background-color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .left-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .hamburger-menu {
+            padding: 8px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .youtube-logo {
+            height: 20px;
+        }
+
+        .center-section {
+            display: flex;
+            align-items: center;
+            margin-left: 40px;
+            margin-right: 40px;
+            max-width: 500px;
+            flex: 1;
+        }
+
+        .search-bar {
+            flex: 1;
+            height: 36px;
+            padding: 0 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 2px 0 0 2px;
+        }
+
+        .search-button {
+            height: 36px;
+            width: 64px;
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            border-left: none;
+            cursor: pointer;
+        }
+
+        .right-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-container {
+            padding: 8px;
+        }
+
+        .main {
+            display: flex;
+            margin-top: 56px;
+        }
+
+        .sidebar {
+            width: 240px;
+            background-color: white;
+            position: fixed;
+            top: 56px;
+            left: 0;
+            bottom: 0;
+            padding-top: 10px;
+            overflow-y: auto;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.collapsed {
+            transform: translateX(-240px);
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 24px;
+            cursor: pointer;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .sidebar-item .material-icons {
+            margin-right: 24px;
+        }
+
+        .content {
+            flex: 1;
+            padding: 24px;
+            margin-left: 240px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .content.expanded {
+            margin-left: 0;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 40px 16px;
+        }
+
+        .video-preview {
+            cursor: pointer;
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 0;
+            padding-top: 56.25%;
+            position: relative;
+            background-color: #ccc;
+        }
+
+        .video-info {
+            display: flex;
+            align-items: flex-start;
+            margin-top: 12px;
+        }
+
+        .channel-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 12px;
+        }
+
+        .video-details h3 {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .video-details p {
+            font-size: 12px;
+            color: #606060;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .header {
+                padding: 0 8px;
+            }
+
+            .center-section {
+                margin-left: 0;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="left-section">
+            <div class="hamburger-menu">
+                <i class="material-icons">menu</i>
+            </div>
+            <img src="https://www.youtube.com/s/desktop/7449ebf7/img/favicon_144x144.png" alt="YouTube Logo" class="youtube-logo">
+        </div>
+        <div class="center-section">
+            <input type="text" class="search-bar" id="search-input" placeholder="Search">
+            <button class="search-button" id="search-btn">
+                <i class="material-icons">search</i>
+            </button>
+        </div>
+        <div class="right-section">
+            <div class="icon-container">
+                <i class="material-icons">video_call</i>
+            </div>
+            <div class="icon-container">
+                <i class="material-icons">apps</i>
+            </div>
+            <div class="icon-container">
+                <i class="material-icons">notifications</i>
+            </div>
+            <div class="icon-container">
+                <i class="material-icons">account_circle</i>
+            </div>
+        </div>
+    </header>
+
+    <div class="main">
+        <nav class="sidebar">
+            <div class="sidebar-item">
+                <i class="material-icons">home</i>
+                <span>Home</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">explore</i>
+                <span>Explore</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">subscriptions</i>
+                <span>Subscriptions</span>
+            </div>
+            <div class="sidebar-item">
+                <i class="material-icons">video_library</i>
+                <span>Library</span>
+            </div>
+        </nav>
+
+        <main class="content">
+            <div class="video-grid" id="video-grid">
+                <!-- Video previews will be dynamically added here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Toggle sidebar
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const sidebar = document.querySelector('.sidebar');
+        const content = document.querySelector('.content');
+
+        hamburgerMenu.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+        });
+
+        // Fetch recommended videos from Bilibili API
+        async function fetchRecommendedVideos() {
+            try {
+                const response = await fetch('https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd?ps=12&fresh_idx=1', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                const videoGrid = document.getElementById('video-grid');
+                data.data.item.forEach(video => {
+                    const videoElement = document.createElement('div');
+                    videoElement.classList.add('video-preview');
+                    videoElement.innerHTML = `
+                        <div class="thumbnail" style="background-image: url(${video.pic})"></div>
+                        <div class="video-info">
+                            <div class="channel-icon" style="background-image: url(${video.owner.face})"></div>
+                            <div class="video-details">
+                                <h3>${video.title}</h3>
+                                <p>${video.owner.name}</p>
+                                <p>${video.stat.view} views • ${new Date(video.pubdate * 1000).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    `;
+                    videoGrid.appendChild(videoElement);
+                });
+            } catch (error) {
+                console.error('Error fetching videos:', error);
+            }
+        }
+
+        // Search function
+        async function searchVideos() {
+            const query = document.getElementById('search-input').value;
+            if (!query) return;
+            try {
+                const response = await fetch(`https://api.bilibili.com/x/web-interface/search/all/v2?keyword=${query}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                const videoGrid = document.getElementById('video-grid');
+                videoGrid.innerHTML = ''; // Clear current videos
+                data.data.result.forEach(result => {
+                    if (result.result_type === 'video') {
+                        result.data.forEach(video => {
+                            const videoElement = document.createElement('div');
+                            videoElement.classList.add('video-preview');
+                            videoElement.innerHTML = `
+                                <div class="thumbnail" style="background-image: url(${video.pic})"></div>
+                                <div class="video-info">
+                                    <div class="channel-icon" style="background-image: url(${video.author_face})"></div>
+                                    <div class="video-details">
+                                        <h3>${video.title}</h3>
+                                        <p>${video.author}</p>
+                                        <p>${video.play} views • ${video.pubdate}</p>
+                                    </div>
+                                </div>
+                            `;
+                            videoGrid.appendChild(videoElement);
+                        });
+                    }
+                });
+            } catch (error) {
+                console.error('Error searching videos:', error);
+            }
+        }
+
+        document.getElementById('search-btn').addEventListener('click', searchVideos);
+
+        // Initial call to load recommended videos
+        fetchRecommendedVideos();
+    </script>
+</body>
+
+</html>
